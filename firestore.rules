@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function isAdmin() {
+      return signedIn() &&
+        request.auth.token.email_verified == true &&
+        request.auth.token.email == 'whb4912@gmail.com';
+    }
+
+    // Anyone can submit a valid inquiry; only admins can read or remove inquiries.
+    match /inquiries/{inquiryId} {
+      allow create: if
+        request.resource.data.keys().hasAll(['name','email','subject','message','createdAt']) &&
+        request.resource.data.name is string &&
+        request.resource.data.name.size() >= 2 &&
+        request.resource.data.name.size() <= 100 &&
+        request.resource.data.email is string &&
+        request.resource.data.email.size() <= 160 &&
+        request.resource.data.subject is string &&
+        request.resource.data.subject.size() >= 2 &&
+        request.resource.data.subject.size() <= 160 &&
+        request.resource.data.message is string &&
+        request.resource.data.message.size() >= 2 &&
+        request.resource.data.message.size() <= 4000;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Public website reads published content. Only admin custom-claim accounts write.
+    match /{collection}/{documentId} {
+      allow read: if collection in ['services','products','team','social','site']
+        && (isAdmin() || resource.data.published == true);
+      allow create, update, delete: if isAdmin();
+    }
+  }
+}
