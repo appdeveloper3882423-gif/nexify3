@@ -1,8 +1,0 @@
-{
-  "name":"nexify-tech-solutions-site-admin",
-  "private":true,
-  "version":"1.0.0",
-  "description":"Nexify Tech Solutions website and Firebase CMS admin setup scripts",
-  "scripts":{"seed":"node scripts/seed-content.js ./serviceAccountKey.json","grant-admin":"node scripts/set-admin-claim.js ./serviceAccountKey.json"},
-  "devDependencies":{"firebase-admin":"^13.0.0"}
-}
