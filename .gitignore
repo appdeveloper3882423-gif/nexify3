@@ -1,6 +1,0 @@
-.firebase/
-.vercel/
-node_modules/
-.env*
-serviceAccountKey.json
-functions/node_modules/
